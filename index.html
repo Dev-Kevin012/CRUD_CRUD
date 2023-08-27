@@ -1,0 +1,93 @@
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Registration Form</title>
+      <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+        crossorigin="anonymous"
+      />
+      <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    </head>
+    <body class="flex align-items-center">
+      <div class="container col-lg-6">
+        <div class="card bg-light shadow-sm p-3 rounded">
+          <div class="card-body">
+            <h3 class="card-title mt-2 text-center">Book a Call</h3>
+            <hr />
+            <form class="d-grid gap-3" onsubmit="handleSubmit(event)">
+              <div class="row g-3">
+                <div class="col">
+                  <label for="Name" class="form-label">Name:</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="name"
+                    required
+                    id="name"
+                  />
+                </div>
+                <div class="col">
+                  <label for="Email" class="form-label">Email address:</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    required
+                    id="email"
+                  />
+                </div>
+              </div>
+              <div>
+                <label for="phone" class="form-label">Phone Number:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="phone_no"
+                  required
+                  id="phone"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">
+                Get a Call
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="container mt-5" id="items"></div>
+    </body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const Axios = axios.create({
+        baseURL:
+          "https://crudcrud.com/api/dc276fe39ca548deb4d218bd4b44b515/users",
+      });
+      const handleSubmit = () => {
+        event.preventDefault();
+        const name = event.target.name.value;
+        const email = event.target.email.value;
+        const phone_number = event.target.phone_no.value;
+
+        const formData = {
+          Name: name,
+          Email_Address: email,
+          Phone_Number: phone_number,
+        };
+        Axios.post("/", formData)
+          .then((result) => {
+            alert("Details Saved!");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      };
+    </script>
+  </html>
