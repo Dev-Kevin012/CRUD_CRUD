@@ -1,6 +1,6 @@
 const table = document.getElementById("table-container");
 const Axios = axios.create({
-  baseURL: "https://crudcrud.com/api/dc276fe39ca548deb4d218bd4b44b515/users",
+  baseURL: "https://crudcrud.com/api/78065c6fd35b4944ba63e4ea1d2adc7c/users",
 });
 const Toast = Swal.mixin({
   toast: true,
@@ -13,21 +13,23 @@ const Toast = Swal.mixin({
   timer: 3000,
   timerProgressBar: true,
 });
+let rowData = [];
+
 const handleSubmit = (event) => {
   event.preventDefault();
-  const name = event.target.name.value;
-  const email = event.target.email.value;
-  const phone_number = event.target.phone_no.value;
 
   const formData = {
-    Name: name,
-    Email_Address: email,
-    Phone_Number: phone_number,
+    Name: event.target.name.value,
+    Email_Address: event.target.email.value,
+    Phone_Number: event.target.phone_no.value,
   };
   Axios.post("/", formData)
     .then(() => {
       Swal.fire("Appointment Booked!", "", "success");
       showData();
+      document.getElementById("name").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("phone").value = "";
     })
     .catch((err) => {
       console.log(err);
@@ -41,17 +43,23 @@ const showData = () => {
       const tableBody = document.getElementById("table-body");
       const data = result.data;
       if (data.length == 0) {
-        document.getElementById("table-container").classList.add("d-none");
         return;
       }
-      document.getElementById("table-container").classList.remove("d-none");
+      const table = document.getElementById("table-container");
+      if (table) {
+        table.classList.remove("d-none");
+      }
+      rowData = data;
       data.forEach((row, index) => {
         html += `<tr class="${row._id}">
         <th scope="row">${index + 1}</th>
         <td>${row.Name}</td>
         <td>${row.Email_Address}</td>
         <td>${row.Phone_Number}</td>
-        <td class="text-center align-middle">
+        <td class="d-flex align-items-center gap-2">
+           <button class="btn btn-sm btn-primary" onclick="handleEdit('${
+             row._id
+           }')"><i class='bx bx-edit'></i></button>
          <button class="btn btn-sm btn-danger" onclick="handleDelete('${
            row._id
          }')"><i class='bx bx-trash'></i></button>
@@ -92,4 +100,36 @@ const handleDelete = (id) => {
         });
     }
   });
+};
+
+const handleEdit = (id) => {
+  $("#editModal").modal("show");
+  const row = rowData.find((item) => item._id === id);
+  document.getElementById("Name").value = row.Name;
+  document.getElementById("Email").value = row.Email_Address;
+  document.getElementById("phone_no").value = row.Phone_Number;
+  document.getElementById("itemId").value = row._id;
+};
+
+const editItem = () => {
+  const data = {
+    Name: document.getElementById("Name").value,
+    Email_Address: document.getElementById("Email").value,
+    Phone_Number: document.getElementById("phone_no").value,
+  };
+  const endPointId = document.getElementById("itemId").value;
+  Axios.put(`/${endPointId}`, data)
+    .then(() => {
+      $("#editModal").modal("hide"); // Hide the modal
+
+      Toast.fire({
+        icon: "success",
+        title: "Updation Successful!",
+      });
+
+      showData(); // Refresh the data
+    })
+    .catch(() => {
+      Swal.fire("Something went Wrong!", "", "error");
+    });
 };
