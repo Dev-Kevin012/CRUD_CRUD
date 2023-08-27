@@ -42,32 +42,33 @@ const showData = () => {
     .then((result) => {
       const tableBody = document.getElementById("table-body");
       const data = result.data;
-      if (data.length == 0) {
-        return;
-      }
-      const table = document.getElementById("table-container");
-      if (table) {
-        table.classList.remove("d-none");
-      }
       rowData = data;
-      data.forEach((row, index) => {
-        html += `<tr class="${row._id}">
-        <th scope="row">${index + 1}</th>
-        <td>${row.Name}</td>
-        <td>${row.Email_Address}</td>
-        <td>${row.Phone_Number}</td>
-        <td class="d-flex align-items-center gap-2">
-           <button class="btn btn-sm btn-primary" onclick="handleEdit('${
+      if (data.length > 0) {
+        data.forEach((row, index) => {
+          html += `<tr class="${row._id}">
+          <th scope="row">${index + 1}</th>
+          <td>${row.Name}</td>
+          <td>${row.Email_Address}</td>
+          <td>${row.Phone_Number}</td>
+          <td class="d-flex align-items-center gap-2">
+             <button class="btn btn-sm btn-primary" onclick="handleEdit('${
+               row._id
+             }')"><i class='bx bx-edit'></i></button>
+           <button class="btn btn-sm btn-danger" onclick="handleDelete('${
              row._id
-           }')"><i class='bx bx-edit'></i></button>
-         <button class="btn btn-sm btn-danger" onclick="handleDelete('${
-           row._id
-         }')"><i class='bx bx-trash'></i></button>
-        </td>
-      </tr>
-      `;
-      });
-      tableBody.innerHTML = html;
+           }')"><i class='bx bx-trash'></i></button>
+          </td>
+        </tr>
+        `;
+        });
+        tableBody.innerHTML = html;
+      }
+      const tableContainer = document.getElementById("table-container");
+      if (data.length > 0) {
+        tableContainer.classList.remove("d-none"); // Show table
+      } else {
+        tableContainer.classList.add("d-none"); // Hide table
+      }
     })
     .catch((err) => {
       console.log(err);
