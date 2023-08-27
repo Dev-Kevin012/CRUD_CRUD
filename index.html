@@ -10,7 +10,13 @@
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/axios@1.4.0/dist/axios.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="./script.js"></script>
   </head>
   <body class="flex align-items-center">
@@ -62,11 +68,15 @@
     <div id="table-container">
       <table class="table table-bordered container mt-5">
         <thead>
-          <!-- Table header cells will be populated everytime after fetching data -->
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Action</th>
+          </tr>
         </thead>
-        <tbody>
-          <!-- This tbody will be cleared and updated with new data -->
-        </tbody>
+        <tbody id="table-body"></tbody>
       </table>
     </div>
   </body>

@@ -1,5 +1,17 @@
+const table = document.getElementById("table-container");
 const Axios = axios.create({
   baseURL: "https://crudcrud.com/api/dc276fe39ca548deb4d218bd4b44b515/users",
+});
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-right",
+  iconColor: "white",
+  customClass: {
+    popup: "colored-toast",
+  },
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
 });
 const handleSubmit = (event) => {
   event.preventDefault();
@@ -14,7 +26,7 @@ const handleSubmit = (event) => {
   };
   Axios.post("/", formData)
     .then(() => {
-      alert("Details Saved!");
+      Swal.fire("Appointment Booked!", "", "success");
       showData();
     })
     .catch((err) => {
@@ -23,37 +35,31 @@ const handleSubmit = (event) => {
 };
 
 const showData = () => {
+  let html = "";
   Axios.get("/")
     .then((result) => {
+      const tableBody = document.getElementById("table-body");
       const data = result.data;
-      const table = document.querySelector("#table-container table");
-      const tbody = table.querySelector("tbody");
-      const thead = table.querySelector("thead");
-
-      // Clear existing tbody content
-      tbody.innerHTML = "";
-
-      // Populate the table header
-      if (thead.children.length === 0) {
-        const headerRow = document.createElement("tr");
-        Object.keys(data[0]).forEach((headerText) => {
-          const headerCell = document.createElement("th");
-          headerCell.textContent = headerText;
-          headerRow.appendChild(headerCell);
-        });
-        thead.appendChild(headerRow);
+      if (data.length == 0) {
+        document.getElementById("table-container").classList.add("d-none");
+        return;
       }
-
-      // Populate the table body with new data
-      data.forEach((item) => {
-        const row = document.createElement("tr");
-        Object.values(item).forEach((value) => {
-          const cell = document.createElement("td");
-          cell.textContent = value;
-          row.appendChild(cell);
-        });
-        tbody.appendChild(row);
+      document.getElementById("table-container").classList.remove("d-none");
+      data.forEach((row, index) => {
+        html += `<tr class="${row._id}">
+        <th scope="row">${index + 1}</th>
+        <td>${row.Name}</td>
+        <td>${row.Email_Address}</td>
+        <td>${row.Phone_Number}</td>
+        <td class="text-center align-middle">
+         <button class="btn btn-sm btn-danger" onclick="handleDelete('${
+           row._id
+         }')"><i class='bx bx-trash'></i></button>
+        </td>
+      </tr>
+      `;
       });
+      tableBody.innerHTML = html;
     })
     .catch((err) => {
       console.log(err);
@@ -61,3 +67,29 @@ const showData = () => {
 };
 
 document.addEventListener("DOMContentLoaded", showData);
+
+const handleDelete = (id) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "This Appointment will be deleted!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#35A29F",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Axios.delete(`/${id}`)
+        .then(() => {
+          Toast.fire({
+            icon: "success",
+            title: "Deletion Successful!",
+          });
+          showData();
+        })
+        .catch((err) => {
+          Swal.fire("Something went Wrong!", "", "error");
+        });
+    }
+  });
+};
